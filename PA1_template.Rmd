@@ -7,19 +7,121 @@ output:
 
 
 ## Loading and preprocessing the data
+```{r echo=TRUE, warning=FALSE}
+library(ggplot2)
+library(reshape2)
+library(gridExtra)
 
+# data is downloaded and stored in a folder named data
+MyData <- read.csv(file="./data/activity.csv", header = TRUE, sep = ",")
+MyData$date <- as.Date(MyData$date)
+```
 
 
 ## What is mean total number of steps taken per day?
+```{r echo=TRUE, warning=FALSE}
+# aggregate total steps as per each date
+actMeltDate <- melt(MyData, id.vars="date", measure.vars="steps", na.rm=FALSE)
+actCastDate <- dcast(actMeltDate, date ~ variable, sum)
+plot(actCastDate$date, actCastDate$steps, type="h", main="Histogram - Total Number of Steps Taken Each Day", xlab="Date", ylab="Steps per Day", col="blue", lwd=7)
+```
+
+```{r echo=TRUE, warning=FALSE}
+## a. Calculate the mean of the total number of steps taken per day
+cat("Mean of the total number of steps taken per day =", + mean(actCastDate$steps, na.rm=TRUE))
+```
 
 
+```{r echo=TRUE, warning=FALSE}
+## b. Calculate the median of the total number of steps taken per day
+cat("Median of the total number of steps taken per day =", median(actCastDate$steps, na.rm=TRUE))
+```
 
 ## What is the average daily activity pattern?
+```{r echo=TRUE, warning=FALSE}
+# aggregate total steps as per each interval
+actMeltInt <- melt(MyData, id.vars="interval", measure.vars="steps", na.rm=TRUE)
+actCastInt <- dcast(actMeltInt, interval ~ variable, mean)
+plot(actCastInt$interval, actCastInt$steps, type="l", main="Time Series - Average Daily Activity Pattern", xlab="Interval", ylab="Steps", col="orange", lwd=2)
+```
 
-
+```{r echo=TRUE, warning=FALSE}
+## a. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+cat("Which 5-minute interval has Max number of steps? At", actCastInt$interval[which(actCastInt$steps == max(actCastInt$steps))], "with steps", max(actCastInt$steps))
+```
 
 ## Imputing missing values
+```{r}
+## a. Total number of missing values in the dataset
+cat("Total number of missing values in the dataset", sum(is.na(MyData$steps)))
+```
 
+## Strategy for imputing missing data
+#####  Use mean number of steps as a strategy to replace the missing values
 
+```{r echo=TRUE, warning=FALSE}
+## b. Fill in Missing Data
+# create another data frame to store processed data frame
+StepsByInt <- actCastInt
+
+# Create new data frame to have NA replaced
+MyDataNoNA <- MyData
+
+# Merge both data set
+MyDataMerge = merge(MyDataNoNA, StepsByInt, by="interval", suffixes=c(".mydat", ".sbi"))
+
+# Create a list of indexes where steps is NA
+NaIndex = which(is.na(MyDataNoNA$steps))
+
+# Replace the missing values
+MyDataNoNA[NaIndex,"steps"] = MyDataMerge[NaIndex,"steps.sbi"]
+```
+
+```{r echo=TRUE, warning=FALSE}
+## c. Create new data set with missing data filled in
+actMeltNoNaDate <- melt(MyDataNoNA, id.vars="date", measure.vars="steps", na.rm=FALSE)
+actCastNoNaDate <- dcast(actMeltNoNaDate, date ~ variable, sum)
+plot(actCastNoNaDate$date, actCastNoNaDate$steps, type="h", main="Histogram - Total Number of Steps Taken Each Day (Missing data filled)", xlab="Date", ylab="Steps per Day", col="orange", lwd=7)
+```
+
+```{r echo=TRUE, warning=FALSE}
+## d. Calculate the mean of the total number of steps taken per day
+cat("Mean of the total number of steps taken per day =", + mean(actCastNoNaDate$steps, na.rm=TRUE))
+```
+
+```{r}
+## e. Calculate the median of the total number of steps taken per day
+cat("Median of the total number of steps taken per day =", median(actCastNoNaDate$steps, na.rm=TRUE))
+```
+
+##### not much difference on mean and median when comparing with its first part of assignment.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r echo=TRUE, warning=FALSE}
+# create a field of names of week
+for (i in 1:nrow(MyDataNoNA)) {
+  if (weekdays(MyDataNoNA$date[i]) == "Saturday" | weekdays(MyDataNoNA$date[i]) == "Sunday") {
+    MyDataNoNA$NamesOfWeek[i] = "weekend"
+  } else {
+    MyDataNoNA$NamesOfWeek[i] = "weekday"
+  }
+}
+```
+
+```{r echo=TRUE, warning=FALSE}
+# create two different set of data
+WeekdayAct <- subset(MyDataNoNA, NamesOfWeek=="weekday")
+WeekendAct <- subset(MyDataNoNA, NamesOfWeek=="weekend")
+
+actAggWeekday <- melt(WeekdayAct, id.vars="interval", measure.vars="steps")
+actAggWeekend <- melt(WeekendAct, id.vars="interval", measure.vars="steps")
+actCastWeekday <- dcast(actAggWeekday, interval ~ variable, mean)
+actCastWeekend <- dcast(actAggWeekend, interval ~ variable, mean)
+```
+
+```{r echo=TRUE, warning=FALSE}
+plot1 <- qplot(actCastWeekday$interval, actCastWeekday$steps, geom="line", data=actCastWeekday, type="bar", main="Steps by Interval - Weekday", xlab="Interval", ylab="Number of Steps")
+plot2 <- qplot(actCastWeekend$interval, actCastWeekend$steps, geom="line", data=actCastWeekend, type="bar", main="Steps by Interval - Weekend", xlab="Interval", ylab="Number of Steps")
+grid.arrange(plot1, plot2, nrow=2)
+```
+
