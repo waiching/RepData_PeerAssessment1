@@ -28,7 +28,7 @@ plot(actCastDate$date, actCastDate$steps, type="h", main="Histogram - Total Numb
 
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
 
-##### a. Calculate the mean of the total number of steps taken per day
+a. Calculate the mean of the total number of steps taken per day
 
 ```r
 cat("Mean of the total number of steps taken per day =", + mean(actCastDate$steps, na.rm=TRUE))
@@ -38,7 +38,7 @@ cat("Mean of the total number of steps taken per day =", + mean(actCastDate$step
 ## Mean of the total number of steps taken per day = 10766.19
 ```
 
-##### b. Calculate the median of the total number of steps taken per day
+b. Calculate the median of the total number of steps taken per day
 
 ```r
 cat("Median of the total number of steps taken per day =", median(actCastDate$steps, na.rm=TRUE))
@@ -59,7 +59,7 @@ plot(actCastInt$interval, actCastInt$steps, type="l", main="Time Series - Averag
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
 
-###### a. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+a. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 ```r
 cat("Which 5-minute interval has Max number of steps? At", actCastInt$interval[which(actCastInt$steps == max(actCastInt$steps))], "with steps", max(actCastInt$steps))
@@ -71,7 +71,7 @@ cat("Which 5-minute interval has Max number of steps? At", actCastInt$interval[w
 
 ## Imputing missing values
 
-##### a. Total number of missing values in the dataset
+a. Total number of missing values in the dataset
 
 ```r
 cat("Total number of missing values in the dataset", sum(is.na(MyData$steps)))
@@ -82,10 +82,10 @@ cat("Total number of missing values in the dataset", sum(is.na(MyData$steps)))
 ```
 
 
-### Strategy for imputing missing data
-###### Replace missing values with the mean taken during that 5-minute interval
+##### Strategy for imputing missing data
+Replace missing values with the mean taken during that 5-minute interval
 
-##### b. Fill in Missing Data
+b. Fill in Missing Data
 
 ```r
 # create another data frame to store processed data frame
@@ -104,7 +104,7 @@ NaIndex = which(is.na(MyDataNoNA$steps))
 MyDataNoNA[NaIndex,"steps"] = MyDataMerge[NaIndex,"steps.sbi"]
 ```
 
-##### c. Create new data set with missing data filled in
+c. Create new data set with missing data filled in
 
 ```r
 actMeltNoNaDate <- melt(MyDataNoNA, id.vars="date", measure.vars="steps", na.rm=FALSE)
@@ -114,7 +114,7 @@ plot(actCastNoNaDate$date, actCastNoNaDate$steps, type="h", main="Histogram - To
 
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png) 
 
-##### d. Calculate the mean of the total number of steps taken per day
+d. Calculate the mean of the total number of steps taken per day
 
 ```r
 cat("Mean of the total number of steps taken per day =", + mean(actCastNoNaDate$steps, na.rm=TRUE))
@@ -124,7 +124,7 @@ cat("Mean of the total number of steps taken per day =", + mean(actCastNoNaDate$
 ## Mean of the total number of steps taken per day = 10889.8
 ```
 
-##### e. Calculate the median of the total number of steps taken per day
+e. Calculate the median of the total number of steps taken per day
 
 ```r
 cat("Median of the total number of steps taken per day =", median(actCastNoNaDate$steps, na.rm=TRUE))
@@ -134,7 +134,7 @@ cat("Median of the total number of steps taken per day =", median(actCastNoNaDat
 ## Median of the total number of steps taken per day = 11015
 ```
 
-##### not much difference on mean and median when comparing with its first part of assignment
+not much difference on mean and median when comparing with its first part of assignment
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -148,7 +148,7 @@ for (i in 1:nrow(MyDataNoNA)) {
 }
 ```
 
-##### Create two sets of data
+Create two sets of data
 
 ```r
 WeekdayAct <- subset(MyDataNoNA, NamesOfWeek=="weekday")
