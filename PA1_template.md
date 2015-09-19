@@ -23,7 +23,7 @@ MyData$date <- as.Date(MyData$date)
 ##aggregate total steps as per each date
 actMeltDate <- melt(MyData, id.vars="date", measure.vars="steps", na.rm=FALSE)
 actCastDate <- dcast(actMeltDate, date ~ variable, sum)
-plot(actCastDate$date, actCastDate$steps, type="h", main="Histogram - Total Number of Steps Taken Each Day", xlab="Date", ylab="Steps per Day", col="blue", lwd=7)
+plot(actCastDate$date, actCastDate$steps, type="h", main="Histogram - Total Number of Steps Taken Each Day", xlab="Date", ylab="Steps per Day", col="blue", lwd=8)
 ```
 
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
@@ -109,7 +109,7 @@ MyDataNoNA[NaIndex,"steps"] = MyDataMerge[NaIndex,"steps.sbi"]
 ```r
 actMeltNoNaDate <- melt(MyDataNoNA, id.vars="date", measure.vars="steps", na.rm=FALSE)
 actCastNoNaDate <- dcast(actMeltNoNaDate, date ~ variable, sum)
-plot(actCastNoNaDate$date, actCastNoNaDate$steps, type="h", main="Histogram - Total Number of Steps Taken Each Day (Missing data filled)", xlab="Date", ylab="Steps per Day", col="orange", lwd=7)
+plot(actCastNoNaDate$date, actCastNoNaDate$steps, type="h", main="Histogram - Total Number of Steps Taken Each Day (Missing data filled)", xlab="Date", ylab="Steps per Day", col="orange", lwd=8)
 ```
 
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png) 
